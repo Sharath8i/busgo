@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Kinetic Editorial Palette (Material 3) */
+  --primary: #0037b0;
+  --primary-container: #1d4ed8;
+  --on-primary: #ffffff;
+  --secondary: #4d5b94;
+  --tertiary: #753000;
+  --tertiary-container: #9a4200;
+  --background: #faf8ff;
+  --surface: #faf8ff;
+  --on-surface: #1a1b23;
+  --surface-container: #ededf9;
+  --surface-container-low: #f3f2fe;
+  --surface-container-lowest: #ffffff;
+  --surface-bright: #faf8ff;
+  --outline-variant: #c4c5d7;
+  --text-main: #1a1b23;
+  --text-muted: #434655;
+  --surface-border: #e2e1ed;
+  
+  --shadow-editorial: 0 20px 40px rgba(26, 27, 35, 0.06);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-surface font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline text-on-surface;
+  }
+}
+
+@layer components {
+  .editorial-shadow {
+     box-shadow: var(--shadow-editorial);
+  }
+  
+  .glass-nav {
+    @apply bg-white/80 backdrop-blur-xl border-b border-surface-border;
+  }
+
+  /* Forms */
+  .input-field {
+    @apply w-full rounded-xl border border-surface-border bg-white px-4 py-3 text-sm transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none font-bold uppercase tracking-tight;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-black text-white uppercase tracking-widest transition-all hover:bg-primary-container active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20;
+  }
+
+  .btn-secondary {
+    @apply flex items-center justify-center rounded-xl border border-surface-border bg-surface-container-lowest px-6 py-3 text-sm font-black text-on-surface uppercase tracking-widest transition-all hover:bg-surface-container-low active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply flex items-center justify-center rounded-xl px-4 py-2 text-sm font-black text-on-surface-variant uppercase tracking-widest transition-all hover:bg-surface-container-low hover:text-on-surface;
+  }
+
+  /* Cards */
+  .card {
+     @apply bg-surface-container-lowest rounded-2xl border border-surface-border p-6 shadow-xl;
+  }
+
+  /* Status Badges */
+  .badge {
+     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest;
+  }
+
+  /* Seat Styles (Strict Colors) */
+  .seat-available { @apply h-10 w-10 rounded-lg border-2 border-surface-border bg-white hover:border-primary transition-all cursor-pointer; }
+  .seat-booked { @apply h-10 w-10 rounded-lg bg-surface-container text-on-surface-variant opacity-30 cursor-not-allowed; }
+  .seat-selected { @apply h-10 w-10 rounded-lg bg-primary border-2 border-primary-container text-white shadow-lg shadow-primary/20 scale-105; }
+  .seat-held { @apply h-10 w-10 rounded-lg bg-tertiary border-2 border-tertiary-container text-white; }
+}
+
+/* Animations */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
