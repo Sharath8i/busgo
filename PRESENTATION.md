@@ -12,7 +12,25 @@ This document is designed to assist you during your project viva/presentation. I
 
 ---
 
-## 2. 🏗️ System Architecture (Deep Dive)
+## 2. 🎭 Role-Based Access Control (RBAC) Hierarchy
+
+We implemented a strict multi-user hierarchy to ensure data integrity and security across different business functions:
+
+### 🛡️ System Administrator (`admin`)
+*   **Responsibility**: Platform oversight and financial reconciliation.
+*   **Technical Workflow**: Accesses the global dashboard which uses **MongoDB Aggregation Pipelines** to calculate total platform revenue, booking volume, and user growth. They have the authority to manage global routes and global refund overrides.
+
+### 🚛 Bus Operator (`operator`)
+*   **Responsibility**: Fleet and manifest management.
+*   **Technical Workflow**: Provided with a restricted dashboard filtered by their **Unique Operator ID**. They can manage their assigned buses, view live passenger manifests (who is sitting in which seat), and update the trip status (e.g., delaying a trip or completing it).
+
+### 👤 Passenger (`passenger`)
+*   **Responsibility**: The end-consumer journey.
+*   **Technical Workflow**: The most state-heavy role. Passengers interact with the **Dynamic Search Engine** and the **Interactive SVG Seating Map**. Their experience is tied to the **Wallet Ledger**, allowing them to manage their own financial credits through self-service cancellations.
+
+---
+
+## 3. 🏗️ System Architecture (Deep Dive)
 
 ### Frontend (User Interface)
 - **Framework**: React 18 (Vite-powered for high speed).
