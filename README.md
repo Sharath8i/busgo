@@ -22,25 +22,16 @@
 busgo/
 ├── client/                   # React frontend (Vite)
 │   ├── src/
-│   │   ├── api/              # Axios API service files
-│   │   ├── components/
-│   │   │   ├── common/       # Navbar, Footer, Button, Input, Card
-│   │   │   └── search/       # CityInput autocomplete
-│   │   ├── constants/        # App-wide constants
-│   │   ├── hooks/            # useDebounce
-│   │   ├── pages/
-│   │   │   ├── Home.jsx
-│   │   │   ├── SearchResults.jsx
-│   │   │   ├── SeatSelection.jsx
-│   │   │   ├── Checkout.jsx
-│   │   │   ├── BookingConfirm.jsx
-│   │   │   ├── MyBookings.jsx
-│   │   │   ├── Login.jsx
-│   │   │   ├── Register.jsx
-│   │   │   ├── admin/AdminDashboard.jsx
-│   │   │   └── operator/OperatorDashboard.jsx
-│   │   ├── redux/            # Store + slices (auth, search, booking)
-│   │   ├── utils/            # format.js helpers
+│   │   ├── components/       # Global common components (Button, Input, Card, Badge)
+│   │   ├── features/         # Domain-driven architecture modules / slices
+│   │   │   ├── admin/        # Admin dashboard tools and components
+│   │   │   ├── auth/         # Login, Registration, and Auth API
+│   │   │   ├── booking/      # Ticket booking, checkout, and seat selection
+│   │   │   ├── operator/     # Operator-specific workflows
+│   │   │   └── search/       # Route searching and home page
+│   │   ├── layouts/          # MainLayout, SidebarLayout
+│   │   ├── redux/            # Global store initialization
+│   │   ├── utils/            # formatting and helpers
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── .env
@@ -48,13 +39,12 @@ busgo/
 │
 └── server/                   # Express backend
     ├── src/
-    │   ├── config/           # MongoDB connection, Cloudinary
-    │   ├── controllers/      # auth, search, booking, operator, admin...
-    │   ├── middlewares/       # auth, error handler
-    │   ├── models/           # Mongoose schemas
-    │   ├── routes/           # Express route files
-    │   └── utils/            # Date helpers, mailer, PDF
-    ├── seed.js               # Demo data seed script
+    │   ├── config/           # Database config
+    │   ├── features/         # Domain-driven backend modular features
+    │   ├── middlewares/      # auth check, error handling filters
+    │   ├── models/           # Mongoose schemas (User, Trip, Booking)
+    │   └── utils/            # Utilities
+    ├── seed_karnataka.js     # Core seed schema for the application
     ├── server.js
     └── .env
 ```
@@ -200,17 +190,17 @@ Open **http://localhost:5173**
 
 ---
 
-## Pages
+## End-User Portals & Feature Pages
 
-| Route                    | Component              | Auth     |
-|--------------------------|------------------------|----------|
-| /                        | Home                   | —        |
-| /search                  | SearchResults          | —        |
-| /seats/:tripId           | SeatSelection          | —        |
-| /checkout                | Checkout               | Passenger|
-| /booking-confirm/:id     | BookingConfirm         | Passenger|
-| /my-bookings             | MyBookings             | Passenger|
-| /login                   | Login                  | —        |
-| /register                | Register               | —        |
-| /operator                | OperatorDashboard      | Operator |
-| /admin                   | AdminDashboard         | Admin    |
+| Route                      | Entry Component              | Domain   | Authentication Requirement |
+|----------------------------|------------------------------|----------|----------------------------|
+| `/`                        | `HomePage.jsx`               | search   | —                          |
+| `/search`                  | `SearchPage.jsx`             | search   | —                          |
+| `/seats/:tripId`           | `SeatSelectionPage.jsx`      | booking  | —                          |
+| `/checkout/:tripId`        | `CheckoutPage.jsx`           | booking  | Passenger                  |
+| `/booking-confirm/:id`     | `ConfirmPage.jsx`            | booking  | Passenger                  |
+| `/my-bookings`             | `MyBookingsPage.jsx`         | booking  | Passenger                  |
+| `/login`                   | `LoginPage.jsx`              | auth     | —                          |
+| `/register`                | `RegisterPage.jsx`           | auth     | —                          |
+| `/operator`                | `OperatorDashboardPage.jsx`  | operator | Operator                   |
+| `/admin`                   | `AdminDashboardPage.jsx`     | admin    | Admin                      |

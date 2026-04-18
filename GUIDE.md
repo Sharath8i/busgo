@@ -56,8 +56,8 @@ BusGo implements a custom financial ledger system:
     EMAIL_USER=your_gmail
     EMAIL_PASS=your_app_password
     ```
-2.  **Seed Data**: Run `node seed_destinations.js` to populate the network.
-3.  **Host**: Deploy to platforms like **Render**, **Railway**, or **Heroku**.
+2.  **Seed Data**: Run `npm run seed` to initialize the MongoDB layer with Karnataka test nodes and fleet data.
+3.  **Host**: Deploy to platforms like **Render**, **Railway**, or **Vercel**.
 
 ### B. Frontend (React/Vite)
 1.  **Environment Variables**: Create a `.env` in the `client` folder:

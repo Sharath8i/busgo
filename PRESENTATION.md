@@ -57,14 +57,14 @@ This ensures that even if an operator account is compromised or "stuck" in a pen
 
 ---
 
-## 3. 🛡️ Key Security Features
+## 4. 🛡️ Key Security Features
 - **Bcrypt**: One-way salt-hashing for passwords.
 - **JWT**: Stateless session management (no need for session cookies, making it scalable).
 - **Cross-Origin Resource Sharing (CORS)**: Configured to only allow requests from our trusted frontend.
 
 ---
 
-## 4. 💰 The "Refund & Wallet" Logic (The Algorithm)
+## 5. 💰 The "Refund & Wallet" Logic (The Algorithm)
 "The most complex part of our code is the cancellation algorithm in `booking.controller.js`:"
 1.  **Time Delta**: It calculates `DepartureTime - CurrentTime`.
 2.  **Logic**: 
@@ -75,7 +75,7 @@ This ensures that even if an operator account is compromised or "stuck" in a pen
 
 ---
 
-## 5. 🔮 Future Enhancements (Final Slide)
+## 6. 🔮 Future Enhancements (Final Slide)
 - **Real-time GPS Tracking**: Integrating Google Maps API to track the live location of the bus.
 - **Dynamic Pricing**: AI-based pricing that increases when seats are low (Demand-based).
 - **SMS Integration**: Twilio API for sending tickets via SMS.
