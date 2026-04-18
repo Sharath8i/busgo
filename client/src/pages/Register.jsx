@@ -13,7 +13,6 @@ const registerSchema = z.object({
   phone: z.string().min(10, '10 digits required'),
   password: z.string().min(8, 'Min 8 characters'),
   confirmPassword: z.string(),
-  role: z.enum(['passenger', 'operator']),
 }).refine((d) => d.password === d.confirmPassword, {
   message: "Match fail",
   path: ['confirmPassword'],
@@ -25,12 +24,11 @@ export default function Register() {
   const { isLoading, error, user, tempEmail } = useSelector((s) => s.auth);
   const [otp, setOtp] = useState('');
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: 'passenger' },
   });
 
-  const selectedRole = watch('role');
+
 
   useEffect(() => {
     if (user) navigate('/', { replace: true });
@@ -82,14 +80,7 @@ export default function Register() {
                   <p className="mt-2 text-sm text-text-muted">Experience the future of intercity transit.</p>
 
                   <form onSubmit={handleSubmit(onRegister)} className="mt-10 space-y-5">
-                     <div className="flex p-1 bg-surface-alt border border-surface-border rounded-xl">
-                        {['passenger', 'operator'].map(r => (
-                           <label key={r} className={`flex-1 flex items-center justify-center py-2.5 rounded-lg cursor-pointer transition-all ${selectedRole === r ? 'bg-primary text-white shadow-lg' : 'text-text-muted'}`}>
-                              <input type="radio" {...register('role')} value={r} className="hidden" />
-                              <span className="text-[10px] font-black uppercase tracking-widest">{r}</span>
-                           </label>
-                        ))}
-                     </div>
+
 
                      <div>
                         <label className="block text-[10px] font-bold text-text-muted uppercase tracking-widest mb-2">Full Name</label>

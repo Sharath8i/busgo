@@ -12,21 +12,30 @@ This document is designed to assist you during your project viva/presentation. I
 
 ---
 
-## 2. 🎭 Role-Based Access Control (RBAC) Hierarchy
+## 2. 🔐 Login & Role-Based Access — Unified System Design
 
-We implemented a strict multi-user hierarchy to ensure data integrity and security across different business functions:
+We implemented a **single unified login system** for all user roles—**Passenger, Operator, and Admin**—to reduce technical debt and maximize security.
 
-### 🛡️ System Administrator (`admin`)
-*   **Responsibility**: Platform oversight and financial reconciliation.
-*   **Technical Workflow**: Accesses the global dashboard which uses **MongoDB Aggregation Pipelines** to calculate total platform revenue, booking volume, and user growth. They have the authority to manage global routes and global refund overrides.
+### 🎯 Core Engineering Concept
+*   **Single Entry Point**: There is only **one login page** (`/login`). The system automatically identifies the user's role from the database upon authentication.
+*   **Server-Side Role Resolution**: The user doesn't select their role in the UI; the backend securely injects the role into the **JWT (JSON Web Token)**.
+*   **Dynamic Redirection**: After a successful login, the frontend uses an intelligent `useEffect` hook to navigate the user to their specific dashboard (`/admin`, `/operator`, or `/`).
 
-### 🚛 Bus Operator (`operator`)
-*   **Responsibility**: Fleet and manifest management.
-*   **Technical Workflow**: Provided with a restricted dashboard filtered by their **Unique Operator ID**. They can manage their assigned buses, view live passenger manifests (who is sitting in which seat), and update the trip status (e.g., delaying a trip or completing it).
+### 🛡️ Access Control Matrix
+| Role | Registration | Logic |
+| :--- | :--- | :--- |
+| **Passenger** | Public Signup | Self-registers via `/register`. Default `status: approved`. |
+| **Operator** | Admin Invited | Created by Admin only. **Restricted from public signup.** |
+| **Admin** | System Created | Pre-seeded or created via internal CLI. |
 
-### 👤 Passenger (`passenger`)
-*   **Responsibility**: The end-consumer journey.
-*   **Technical Workflow**: The most state-heavy role. Passengers interact with the **Dynamic Search Engine** and the **Interactive SVG Seating Map**. Their experience is tied to the **Wallet Ledger**, allowing them to manage their own financial credits through self-service cancellations.
+### 🚫 Operator Verification Gate
+For maximum security, Operators are subject to a **Secondary Status Check** during login:
+```javascript
+if (user.role === "operator" && user.status !== "approved") {
+  return res.status(403).json({ message: "Operator not approved" });
+}
+```
+This ensures that even if an operator account is compromised or "stuck" in a pending state, they cannot access sensitive fleet data without a physical "Approved" flag from the System Administrator.
 
 ---
 

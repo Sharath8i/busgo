@@ -61,7 +61,8 @@ export const register = asyncHandler(async (req, res) => {
     email,
     phone,
     passwordHash,
-    role: role === 'operator' ? 'operator' : 'passenger',
+    role: 'passenger',
+    status: 'approved',
     isVerified: false,
     otp: { code: otp, expiresAt },
   });
@@ -113,6 +114,11 @@ export const login = asyncHandler(async (req, res) => {
   }
   if (!user.isActive) {
     return res.status(403).json({ message: 'Account disabled' });
+  }
+
+  // Operator Approval Gate
+  if (user.role === 'operator' && user.status !== 'approved') {
+    return res.status(403).json({ message: 'Operator account pending approval.' });
   }
   const match = await bcrypt.compare(password, user.passwordHash);
   if (!match) {

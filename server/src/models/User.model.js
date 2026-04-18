@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema(
     failedLoginAttempts: { type: Number, default: 0 },
     lockUntil: { type: Date },
     walletBalance: { type: Number, default: 0 },
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'approved',
+    },
   },
   { timestamps: true }
 );
