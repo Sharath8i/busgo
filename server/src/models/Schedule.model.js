@@ -11,6 +11,10 @@ const scheduleSchema = new mongoose.Schema(
     ],
     baseFare: { type: Number, required: true },
     status: { type: String, enum: ['active', 'paused'], default: 'active' },
+    driverId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Driver',
+    },
   },
   { timestamps: true }
 );

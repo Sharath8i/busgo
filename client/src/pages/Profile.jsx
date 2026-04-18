@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProfileThunk } from '../redux/slices/authSlice';
+import { updateProfileThunk } from '../features/auth/authSlice';
 import toast from 'react-hot-toast';
 import Navbar from '../components/common/Navbar';
 

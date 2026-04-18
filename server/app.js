@@ -5,13 +5,13 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 
-import authRoutes from './src/routes/auth.routes.js';
-import searchRoutes from './src/routes/search.routes.js';
-import bookingRoutes from './src/routes/booking.routes.js';
-import paymentRoutes from './src/routes/payment.routes.js';
-import operatorRoutes from './src/routes/operator.routes.js';
-import adminRoutes from './src/routes/admin.routes.js';
-import reviewRoutes from './src/routes/review.routes.js';
+import authRoutes from './src/features/auth/auth.routes.js';
+import searchRoutes from './src/features/search/search.routes.js';
+import bookingRoutes from './src/features/booking/booking.routes.js';
+import paymentRoutes from './src/features/booking/payment.routes.js';
+import operatorRoutes from './src/features/operator/operator.routes.js';
+import adminRoutes from './src/features/admin/admin.routes.js';
+import reviewRoutes from './src/features/booking/review.routes.js';
 import { errorHandler } from './src/middlewares/error.middleware.js';
 
 const app = express();

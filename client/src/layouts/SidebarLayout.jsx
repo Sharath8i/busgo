@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../redux/slices/authSlice';
+import { logout } from '../features/auth/authSlice';
 
 export default function SidebarLayout({ children, menuItems, title }) {
   const { user } = useSelector((s) => s.auth);

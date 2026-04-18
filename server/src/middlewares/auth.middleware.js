@@ -35,7 +35,11 @@ export const authorizeRole =
  */
 export const requireApprovedOperator = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.userId).select('isActive role');
-  if (!user || user.role !== 'operator') {
+  if (!user) return res.status(404).json({ message: 'Account not found' });
+  
+  if (user.role === 'admin') return next();
+  
+  if (user.role !== 'operator') {
     return res.status(403).json({ message: 'Operator account not found' });
   }
   if (!user.isActive) {

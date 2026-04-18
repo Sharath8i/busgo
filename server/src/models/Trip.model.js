@@ -21,6 +21,10 @@ const tripSchema = new mongoose.Schema(
       enum: ['scheduled', 'running', 'completed', 'cancelled'],
       default: 'scheduled',
     },
+    driverId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Driver',
+    },
   },
   { timestamps: true }
 );

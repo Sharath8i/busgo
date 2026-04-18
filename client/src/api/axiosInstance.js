@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { store } from '../redux/store';
-import { setCredentials, logout } from '../redux/slices/authSlice';
+import { setCredentials, logout } from '../features/auth/authSlice';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 

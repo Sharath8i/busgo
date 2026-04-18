@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice';
-import searchReducer from './slices/searchSlice';
-import bookingReducer from './slices/bookingSlice';
+import authReducer from '../features/auth/authSlice';
+import searchReducer from '../features/search/searchSlice';
+import bookingReducer from '../features/booking/bookingSlice';
 
 // ── Persist auth to localStorage ──────────────────────────────────────────
 const AUTH_KEY = 'busgo_auth';

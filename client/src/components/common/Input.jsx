@@ -1,8 +1,10 @@
+import { forwardRef } from 'react';
+
 /**
  * Reusable Input component.
  * Supports label, error message, helper text, start/end icons.
  */
-export default function Input({
+const Input = forwardRef(({
   label,
   error,
   helper,
@@ -12,7 +14,7 @@ export default function Input({
   required = false,
   id,
   ...rest
-}) {
+}, ref) => {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
   return (
@@ -35,6 +37,7 @@ export default function Input({
         )}
 
         <input
+          ref={ref}
           id={inputId}
           className={`input-field ${startIcon ? 'pl-10' : ''} ${endIcon ? 'pr-10' : ''} ${
             error ? 'border-red-400 focus:border-red-400 focus:ring-red-200' : ''
@@ -53,4 +56,6 @@ export default function Input({
       {!error && helper && <p className="text-xs text-on-variant">{helper}</p>}
     </div>
   );
-}
+});
+
+export default Input;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { fetchCities } from '../../api/searchAPI';
+import { fetchCities } from '../../features/search/searchAPI';
 import { useDebounce } from '../../hooks/useDebounce';
 
 /**
