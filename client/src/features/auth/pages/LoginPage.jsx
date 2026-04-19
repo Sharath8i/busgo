@@ -43,7 +43,7 @@ export default function Login() {
     <main className="min-h-screen flex flex-col md:flex-row overflow-hidden bg-surface">
       {/* ── LEFT SIDE: CONTENT ── */}
       <div className="w-full md:w-1/2 lg:w-[45%] flex flex-col px-8 md:px-16 lg:px-24 py-12 relative z-10">
-        
+
         <header className="flex items-center justify-between mb-20 animate-slide-up">
           <Link to="/" className="text-3xl font-black italic tracking-tighter text-primary">BusGo</Link>
           <div className="flex items-center gap-3">
@@ -59,21 +59,21 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            <Input 
-              label="Email Identity" 
-              type="email" 
-              {...register('email', { required: 'Email address is required' })} 
+            <Input
+              label="Email Identity"
+              type="email"
+              {...register('email', { required: 'Email address is required' })}
               error={errors.email?.message}
-              placeholder="operator@busgo.app" 
+              placeholder="operator@busgo.app"
             />
 
             <div className="space-y-2">
-              <Input 
-                label="Secure Passcode" 
-                type="password" 
-                {...register('password', { required: 'Passcode is mandatory' })} 
+              <Input
+                label="Secure Passcode"
+                type="password"
+                {...register('password', { required: 'Passcode is mandatory' })}
                 error={errors.password?.message}
-                placeholder="••••••••" 
+                placeholder="••••••••"
               />
               <div className="flex justify-end pt-1">
                 <Link to="#" className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-container transition-colors">Recover Credentials?</Link>
@@ -81,7 +81,7 @@ export default function Login() {
             </div>
 
             <Button type="submit" fullWidth loading={isLoading} size="lg" className="mt-4">
-              Authorize Access ➔
+              Login ➔
             </Button>
           </form>
 
@@ -113,7 +113,7 @@ export default function Login() {
           <img className="w-full h-full object-cover mix-blend-overlay opacity-40 scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtUCdxLgFOMXOMXIqPClnwxjlWFYjqs4ODaLFJ0jEVpG3U3qynekFDknld-YsigWt2B_xYDkKZHn_BY-v8JyQvcIvBKzqMxQii5R1MH_mDFTLXd93tfkExpIv2MO3dmT6pE1hqvvS2ITSslVUN4D3wVjZnshihL46zaw-TRIcH-n3rrvRfnVDtIFmOCQ7X5jRYsT4h4AftwBPUDrI6-q5h8D0_Q63ejH1U6zgg1DfWQjYCWWDgSA9Ml2IHGHUOuBlvyv7ucnPT5xY" alt="Fleet" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-        
+
         <div className="absolute inset-0 flex flex-col justify-end p-20 lg:p-32 animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <Badge variant="tertiary" className="mb-8 w-fit bg-white/10 text-white backdrop-blur-md px-6 border-white/20">Operational Hub</Badge>
           <h2 className="text-6xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter mb-8">
