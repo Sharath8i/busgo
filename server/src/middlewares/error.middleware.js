@@ -1,7 +1,17 @@
 export const errorHandler = (err, _req, res, _next) => {
   console.error(err);
-  const status = err.statusCode || 500;
-  const message = err.message || 'Server error';
+  let status = err.statusCode || 500;
+  let message = err.message || 'Server error';
+  
+  if (err.code === 11000) {
+    status = 400;
+    const field = Object.keys(err.keyValue || {})[0];
+    message = field ? `A record with that ${field} already exists.` : 'Duplicate field value entered.';
+  } else if (err.name === 'ValidationError') {
+    status = 400;
+    message = Object.values(err.errors).map(val => val.message).join(', ');
+  }
+  
   res.status(status).json({ message });
 };
 

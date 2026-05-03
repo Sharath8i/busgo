@@ -15,10 +15,11 @@ export default function Button({
   icon,
   className = '',
   type = 'button',
+  fullWidth = false,
   ...rest
 }) {
   const base =
-    'inline-flex items-center justify-center gap-2 font-display font-semibold transition-all duration-200 focus:outline-none active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed';
+    `inline-flex items-center justify-center gap-2 font-display font-semibold transition-all duration-200 focus:outline-none active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed ${fullWidth ? 'w-full' : ''}`;
 
   const variants = {
     primary:

@@ -300,12 +300,13 @@ export default function OperatorDashboard() {
 
   useEffect(() => {
     const p = location.pathname;
-    if (p === '/operator') fetchOverview();
+    if (p === '/operator' || p === '/operator/') fetchOverview();
     else if (p === '/operator/buses') fetchBuses();
     else if (p === '/operator/routes') fetchRoutes();
     else if (p.startsWith('/operator/schedules')) fetchSchedules();
     else if (p === '/operator/bookings') fetchBookings();
     else if (p === '/operator/drivers') fetchDrivers();
+    else setLoading(false);
   }, [location.pathname, fetchOverview, fetchBuses, fetchRoutes, fetchSchedules, fetchBookings, fetchDrivers]);
 
   if (loading && !stats && !buses.length && !schedules.length) return <Loading message="Initializing Fleet Console..." />;
@@ -527,7 +528,7 @@ function CreateDriverForm() {
       await api.post('/operator/drivers', data);
       toast.success('Pilot onboarded!');
       navigate('/operator/drivers');
-    } catch { toast.error('Onboarding failed. Check telemetry.'); }
+    } catch (err) { toast.error(err.response?.data?.message || 'Onboarding failed. Check telemetry.'); }
     finally { setSubmitting(false); }
   };
 
@@ -540,7 +541,7 @@ function CreateDriverForm() {
           <Input label="Secure Contact String (Mobile)" {...register('phone', { required: true })} />
           <Input label="Pilot License ID" {...register('licenseNumber', { required: true })} />
           <Input label="Cumulative Experience (Years)" type="number" {...register('experienceYears')} />
-          <Button fullWidth loading={submitting}>Onboard Pilot ✓</Button>
+          <Button type="submit" fullWidth loading={submitting}>Onboard Pilot ✓</Button>
         </form>
       </Card>
     </div>

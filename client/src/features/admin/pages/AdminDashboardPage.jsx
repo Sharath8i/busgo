@@ -81,11 +81,12 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const p = location.pathname;
-    if (p === '/admin') fetchOverview();
+    if (p === '/admin' || p === '/admin/') fetchOverview();
     else if (p === '/admin/users') fetchUsers();
     else if (p === '/admin/operators') fetchOperators();
     else if (p === '/admin/coupons') fetchCoupons();
     else if (p === '/admin/analytics') fetchAnalytics();
+    else setLoading(false);
   }, [location.pathname, fetchOverview, fetchUsers, fetchOperators, fetchCoupons, fetchAnalytics]);
 
   const handleApproveOp = async (id) => {
