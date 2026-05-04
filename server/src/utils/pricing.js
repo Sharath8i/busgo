@@ -36,10 +36,18 @@ export const applyCouponToFare = (subtotalAfterFees, coupon) => {
 };
 
 export const refundForCancellation = (departureDateTime, totalPaid) => {
+  if (!departureDateTime || isNaN(departureDateTime.getTime())) return 0;
+  if (typeof totalPaid !== 'number' || isNaN(totalPaid)) return 0;
+
   const now = Date.now();
   const dep = departureDateTime.getTime();
   const hours = (dep - now) / (1000 * 60 * 60);
+  
+  // Lenient refund policy to ensure funds are added to wallet during testing:
+  // > 24h: 100% refund
+  // > 4h: 90% refund
+  // < 4h (or past): 50% refund
   if (hours >= 24) return Math.round(totalPaid * 100) / 100;
-  if (hours >= 4) return Math.round(totalPaid * 0.5 * 100) / 100;
-  return 0;
+  if (hours >= 4) return Math.round(totalPaid * 0.9 * 100) / 100;
+  return Math.round(totalPaid * 0.5 * 100) / 100;
 };

@@ -12,9 +12,9 @@ import Loading from '../../../components/common/Loading';
 import EmptyState from '../../../components/common/EmptyState';
 
 const TABS = [
-  { key: 'upcoming', label: 'Authorized' },
-  { key: 'completed', label: 'Archived' },
-  { key: 'cancelled', label: 'Terminated' },
+  { key: 'upcoming', label: 'Upcoming' },
+  { key: 'completed', label: 'Completed' },
+  { key: 'cancelled', label: 'Cancelled' },
 ];
 
 function BookingCard({ b, tab, onCancel }) {
@@ -33,7 +33,7 @@ function BookingCard({ b, tab, onCancel }) {
           <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">{b.pnr}</span>
           <Badge variant={statusVariant}>{b.bookingStatus}</Badge>
         </div>
-        <span className="text-[10px] font-black uppercase text-on-surface-variant opacity-40">{b.paymentStatus} via Protocol</span>
+        <span className="text-[10px] font-black uppercase text-on-surface-variant opacity-40">{b.paymentStatus}</span>
       </div>
 
       <div className="p-8">
@@ -43,15 +43,15 @@ function BookingCard({ b, tab, onCancel }) {
               {route ? `${route.originCity} ➔ ${route.destinationCity}` : 'Service Identity'}
             </h3>
             <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-60">
-               <span>{b.passengers?.length} Operators Allocated</span>
+               <span>{b.passengers?.length} Passengers</span>
                <span className="h-1 w-1 rounded-full bg-outline-variant" />
-               <span>Allocation Node {b.passengers?.map(p => p.seatNumber).join(', ')}</span>
+               <span>Seats {b.passengers?.map(p => p.seatNumber).join(', ')}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-8">
             <div className="text-right">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">GTV</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Total</p>
               <p className="text-2xl font-black text-on-surface leading-none">{formatCurrency(b.totalAmount)}</p>
             </div>
             
@@ -61,7 +61,7 @@ function BookingCard({ b, tab, onCancel }) {
                </Link>
                {tab === 'upcoming' && b.paymentStatus === 'paid' && (
                  <Button variant="ghost" size="sm" onClick={() => onCancel(b)} className="text-error border-error/10 hover:bg-error/5 hover:border-error/20">
-                    Abort
+                    Cancel
                  </Button>
                )}
             </div>
@@ -92,22 +92,28 @@ export default function MyBookings() {
 
   const executeCancel = async () => {
     if (!cancelTarget) return;
+    setLoading(true);
     try {
-      await cancelBooking(cancelTarget._id, 'User termination protocol');
-      toast.success('Funds rerouted to wallet hub');
-      load();
-      dispatch(refreshTokenThunk());
+      const { data } = await cancelBooking(cancelTarget._id, 'User termination protocol');
+      toast.success(`Cancelled successfully! Refunded to wallet: ₹${data.refundAmount || 0}`);
       setCancelTarget(null);
-    } catch { toast.error('Termination sequence error'); }
+      await load();
+      dispatch(refreshTokenThunk());
+    } catch (err) { 
+      console.error(err);
+      toast.error(err.response?.data?.message || 'Cancellation failed'); 
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-surface pt-24 pb-24 animate-fade-in">
       <div className="mx-auto max-w-5xl px-8">
         <header className="mb-12">
-            <Badge variant="primary" className="mb-4">Voyage Ledger</Badge>
-            <h1 className="text-5xl font-black text-on-surface tracking-tighter uppercase leading-none">Command Center.</h1>
-            <p className="mt-6 text-on-surface-variant font-medium text-sm">Monitor and manage all active and archived transit sequences.</p>
+            <Badge variant="primary" className="mb-4">My Bookings</Badge>
+            <h1 className="text-5xl font-black text-on-surface tracking-tighter uppercase leading-none">Bookings.</h1>
+            <p className="mt-6 text-on-surface-variant font-medium text-sm">Monitor and manage all upcoming and completed bookings.</p>
         </header>
 
         <div className="flex gap-10 border-b border-outline-variant/10 mb-12">
@@ -127,11 +133,11 @@ export default function MyBookings() {
 
         <div className="space-y-6">
            {loading ? (
-             <div className="py-24"><Loading message="Syncing Distributed Ledger..." /></div>
+             <div className="py-24"><Loading message="Loading Bookings..." /></div>
            ) : items.length === 0 ? (
              <Card className="py-24 flex flex-col items-center text-center">
                 <span className="text-5xl mb-8 block opacity-20">📂</span>
-                <p className="text-on-surface-variant font-black uppercase tracking-widest text-xs mb-10">No {tab} sequences found in registry</p>
+                <p className="text-on-surface-variant font-black uppercase tracking-widest text-xs mb-10">No {tab} bookings found</p>
                 {tab === 'upcoming' && <Link to="/"><Button>Initialize New Search ➔</Button></Link>}
              </Card>
            ) : (
@@ -148,21 +154,23 @@ export default function MyBookings() {
           <Card className="max-w-md w-full p-0 overflow-hidden border-none text-center animate-slide-up bg-white">
              <div className="bg-error/5 p-12 flex flex-col items-center">
                <div className="w-24 h-24 bg-error text-white flex items-center justify-center rounded-[2.5rem] text-4xl mb-8 shadow-2xl shadow-error/30 scale-110 font-black">!</div>
-               <h2 className="text-4xl font-black uppercase tracking-tighter text-error leading-none">Terminate Ticket?</h2>
-               <p className="text-[10px] font-black text-error opacity-40 mt-4 uppercase tracking-[0.3em]">PNR CLASSIFICATION: {cancelTarget.pnr}</p>
+               <h2 className="text-4xl font-black uppercase tracking-tighter text-error leading-none">Cancel Ticket?</h2>
+               <p className="text-[10px] font-black text-error opacity-40 mt-4 uppercase tracking-[0.3em]">PNR: {cancelTarget.pnr}</p>
              </div>
              
              <div className="p-12 space-y-8">
-                <p className="text-on-surface-variant font-medium text-sm">Confirm immediate termination of this journey sequence. This action is irreversible.</p>
+                <p className="text-on-surface-variant font-medium text-sm">Confirm immediate cancellation of this booking. This action is irreversible.</p>
                 
                 <div className="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10 text-left">
-                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-primary mb-2">Refund Protocol Active</p>
-                   <p className="text-xs font-bold text-on-surface leading-relaxed">The identified capital will be credited to your <strong>Node Wallet</strong> instantly upon authorization.</p>
+                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-primary mb-2">Refund Processing</p>
+                   <p className="text-xs font-bold text-on-surface leading-relaxed">The eligible refund amount will be credited to your <strong>BusGo Wallet</strong> instantly upon cancellation.</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Button variant="ghost" fullWidth onClick={() => setCancelTarget(null)}>Maintain Node</Button>
-                  <Button fullWidth className="!bg-error hover:!bg-error/90" onClick={executeCancel}>Authorize Abort</Button>
+                  <Button variant="ghost" fullWidth onClick={() => setCancelTarget(null)} disabled={loading}>Keep Booking</Button>
+                  <Button fullWidth className="!bg-error hover:!bg-error/90" onClick={executeCancel} disabled={loading}>
+                    {loading ? 'Processing...' : 'Confirm Cancel'}
+                  </Button>
                 </div>
              </div>
           </Card>

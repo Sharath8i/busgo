@@ -9,4 +9,7 @@ router.post('/verify', verifyToken, authorizeRole('passenger', 'admin'), payment
 router.post('/pay-with-wallet', verifyToken, authorizeRole('passenger', 'admin'), payment.payWithWallet);
 router.post('/refund', verifyToken, authorizeRole('admin'), payment.refundPayment);
 
+router.post('/create-recharge-order', verifyToken, authorizeRole('passenger', 'admin'), payment.createRechargeOrder);
+router.post('/verify-recharge', verifyToken, authorizeRole('passenger', 'admin'), payment.verifyRecharge);
+
 export default router;

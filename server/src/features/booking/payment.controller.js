@@ -31,11 +31,20 @@ export const createOrder = asyncHandler(async (req, res) => {
     return res.status(503).json({ message: 'Razorpay not configured' });
   }
   const rzp = getRazorpay();
-  const order = await rzp.orders.create({
-    amount: Math.round(rupees * 100),
-    currency: 'INR',
-    receipt: bookingId.toString().slice(0, 40),
-  });
+  let order;
+  try {
+    order = await rzp.orders.create({
+      amount: Math.round(rupees * 100),
+      currency: 'INR',
+      receipt: bookingId.toString().slice(0, 40),
+    });
+  } catch (error) {
+    console.error('Razorpay Error:', error.message || error);
+    return res.status(502).json({ 
+      message: 'Payment gateway unreachable. Please check your internet connection.' 
+    });
+  }
+
   await Payment.findOneAndUpdate(
     { bookingId, razorpayOrderId: order.id },
     {
@@ -217,4 +226,82 @@ export const refundPayment = asyncHandler(async (req, res) => {
   booking.paymentStatus = 'refunded';
   await booking.save();
   res.json({ message: 'Refund initiated', refund });
+});
+
+export const createRechargeOrder = asyncHandler(async (req, res) => {
+  const { amount } = req.body;
+  const rupees = Number(amount);
+  
+  if (!Number.isFinite(rupees) || rupees < 10 || rupees > 50000) {
+    return res.status(400).json({ message: 'Invalid recharge amount. Must be between ₹10 and ₹50,000' });
+  }
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    return res.status(503).json({ message: 'Razorpay not configured' });
+  }
+
+  const rzp = getRazorpay();
+  let order;
+  try {
+    order = await rzp.orders.create({
+      amount: Math.round(rupees * 100),
+      currency: 'INR',
+      receipt: `rech_${req.user.userId.toString().slice(0, 10)}_${Date.now()}`.slice(0, 40),
+    });
+  } catch (error) {
+    console.error('Razorpay Error:', error.message || error);
+    return res.status(502).json({ 
+      message: 'Payment gateway unreachable. Please check your internet connection.' 
+    });
+  }
+
+  res.json({ orderId: order.id, amount: order.amount, currency: order.currency });
+});
+
+export const verifyRecharge = asyncHandler(async (req, res) => {
+  const { 
+    razorpayOrderId, razorpay_order_id,
+    paymentId, razorpay_payment_id,
+    signature, razorpay_signature,
+    amount
+  } = req.body;
+
+  const rzoId = razorpayOrderId || razorpay_order_id;
+  const pId = paymentId || razorpay_payment_id;
+  const sig = signature || razorpay_signature;
+
+  if (!rzoId || !pId || !sig || !amount) {
+    return res.status(400).json({ message: 'Missing verify parameters' });
+  }
+
+  const body = `${rzoId}|${pId}`;
+  const expected = crypto
+    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+    .update(body)
+    .digest('hex');
+    
+  if (expected !== sig) {
+    return res.status(400).json({ message: 'Signature mismatch — payment invalid' });
+  }
+
+  const user = await User.findById(req.user.userId);
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  user.walletBalance = (user.walletBalance || 0) + Number(amount);
+  await user.save();
+
+  try {
+    if (user.email) {
+      await sendEmail({
+        to: user.email,
+        subject: `BusGo — Wallet Recharged Successfully`,
+        html: `<p>Your BusGo Wallet has been recharged with ₹${amount}. Your new balance is ₹${user.walletBalance}.</p>`,
+      });
+    }
+  } catch (err) {
+    console.error('[email] Recharge confirmation email failed:', err.message);
+  }
+
+  res.json({ message: 'Recharge verified', newBalance: user.walletBalance });
 });

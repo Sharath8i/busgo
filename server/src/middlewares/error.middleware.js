@@ -10,6 +10,9 @@ export const errorHandler = (err, _req, res, _next) => {
   } else if (err.name === 'ValidationError') {
     status = 400;
     message = Object.values(err.errors).map(val => val.message).join(', ');
+    console.error('Validation Error Details:', err.errors);
+  } else {
+    console.error('Unexpected Error:', err);
   }
   
   res.status(status).json({ message });

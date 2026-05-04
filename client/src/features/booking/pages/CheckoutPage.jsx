@@ -112,7 +112,10 @@ export default function Checkout() {
 
   const openRazorpay = (order, bookingId) => {
     const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
-    if (!key || !window.Razorpay) { toast.error('Gateway Logic Missing'); return; }
+    if (!key || !window.Razorpay) { 
+      toast.error('Payment gateway unavailable. Please check your internet connection.'); 
+      return; 
+    }
     const rz = new window.Razorpay({
       key,
       amount: order.amount,
@@ -154,7 +157,9 @@ export default function Checkout() {
         const { data: order } = await createPaymentOrder(booking.bookingId, booking.breakdown?.total);
         openRazorpay(order, booking.bookingId);
       }
-    } catch (e) { toast.error(e.response?.data?.message || 'Signal Lost'); }
+    } catch (e) { 
+      toast.error(e.response?.data?.message || 'Connection error. Please try again.'); 
+    }
     finally { setPaying(false); }
   };
 

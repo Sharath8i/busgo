@@ -1,5 +1,5 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/common/Navbar';
 
 const ALL_DESTINATIONS = [
   { from: 'Chennai', to: 'Bangalore', duration: '6h 15m', price: 849, tag: 'Daily Service', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuADGcES65z3Wbrk2vzQ3J-Y7VoaRsctnqn3gOcNIHJFhbZPkl0dd66rW4zczhOcdC4K_i2PlMYVKIzsz5c7KjPIw1xv3EiO4WppudPuLpQ5KC0JscoSUK0FlO4QHqCBUme8WU6WfCsYFA7NPY0Zf95HEuu-J_wFdrc_Hjz4sEgyjG2-cDERcoZYikd_vhb89H76MYf9XtoW3ZgIpibDTD94XIrHqxq_X2yYPp2emwHOg2SxWbjoYyjM_1cHxxIXkGiM9ERYWpRld5s' },
@@ -21,17 +21,26 @@ const ALL_DESTINATIONS = [
 
 export default function Destinations() {
   const navigate = useNavigate();
+  const [selectedDates, setSelectedDates] = useState({});
 
-  const quickBook = (route) => {
+  const handleDateChange = (index, date) => {
+    setSelectedDates(prev => ({ ...prev, [index]: date }));
+  };
+
+  const quickBook = (route, index) => {
     const today = new Date().toISOString().split('T')[0];
+    const dateToUse = selectedDates[index] || today;
+    
     const params = new URLSearchParams({
       from: route.from,
       to: route.to,
-      date: today,
+      date: dateToUse,
       seats: 1
     }).toString();
     navigate(`/search?${params}`);
   };
+
+  const todayStr = new Date().toISOString().split('T')[0];
 
   return (
     <div className="min-h-screen bg-surface-alt font-body pt-24 pb-20">
@@ -41,7 +50,7 @@ export default function Destinations() {
           <span className="text-primary font-black uppercase tracking-widest text-[10px] mb-4 block">Expand Your Horizons</span>
           <h1 className="text-5xl font-black text-on-surface uppercase tracking-tight mb-4">Destinations</h1>
           <p className="text-on-surface-variant font-medium max-w-2xl mx-auto">
-            Discover all 15 active premium routes operational within our network. Book your high-frequency luxury coach directly from the hub below.
+            Discover all 15 active premium routes operational within our network. Select a travel date and book your high-frequency luxury coach directly from the hub below.
           </p>
         </header>
 
@@ -71,12 +80,21 @@ export default function Destinations() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => quickBook(route)}
-                  className="w-full py-3.5 bg-surface-container-lowest border-2 border-surface-container text-primary font-black uppercase tracking-widest text-[10px] rounded-xl flex items-center justify-center gap-2 group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all shadow-sm"
-                >
-                  Book Seat ⚡
-                </button>
+                <div className="flex flex-col gap-3">
+                  <input
+                    type="date"
+                    min={todayStr}
+                    value={selectedDates[i] || todayStr}
+                    onChange={(e) => handleDateChange(i, e.target.value)}
+                    className="w-full px-4 py-2 border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors cursor-pointer bg-surface-container-lowest"
+                  />
+                  <button
+                    onClick={() => quickBook(route, i)}
+                    className="w-full py-3.5 bg-surface-container-lowest border-2 border-surface-container text-primary font-black uppercase tracking-widest text-[10px] rounded-xl flex items-center justify-center gap-2 group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all shadow-sm"
+                  >
+                    Book Seat ⚡
+                  </button>
+                </div>
               </div>
             </div>
           ))}

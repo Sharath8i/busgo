@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProfileThunk } from '../features/auth/authSlice';
+import { updateProfileThunk, refreshTokenThunk } from '../features/auth/authSlice';
 import toast from 'react-hot-toast';
 import Navbar from '../components/common/Navbar';
+import { createRechargeOrder, verifyRecharge } from '../features/booking/bookingAPI';
 
 export default function Profile() {
   const { user, isLoading } = useSelector((state) => state.auth);
@@ -12,6 +13,9 @@ export default function Profile() {
     fullName: '',
     phone: '',
   });
+  
+  const [rechargeAmount, setRechargeAmount] = useState('');
+  const [isRecharging, setIsRecharging] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -33,6 +37,52 @@ export default function Profile() {
       toast.success('Profile credentials updated!');
     } else {
       toast.error(payload || 'Update failed');
+    }
+  };
+
+  const handleRecharge = async (e) => {
+    e.preventDefault();
+    const amount = Number(rechargeAmount);
+    if (!amount || amount < 10 || amount > 50000) {
+      return toast.error('Enter an amount between ₹10 and ₹50,000');
+    }
+    
+    setIsRecharging(true);
+    try {
+      const { data: order } = await createRechargeOrder(amount);
+      const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      
+      if (!key || !window.Razorpay) {
+        toast.error('Payment gateway unavailable. Please check your internet connection.');
+        setIsRecharging(false);
+        return;
+      }
+      
+      const rz = new window.Razorpay({
+        key,
+        amount: order.amount,
+        currency: 'INR',
+        order_id: order.orderId,
+        name: 'BusGo Wallet',
+        description: 'Wallet Recharge',
+        prefill: { name: user?.fullName, email: user?.email },
+        theme: { color: '#000000' },
+        handler: async (response) => {
+          try {
+            await verifyRecharge({ ...response, amount });
+            await dispatch(refreshTokenThunk());
+            toast.success('Wallet recharged successfully!');
+            setRechargeAmount('');
+          } catch (err) {
+            toast.error(err.response?.data?.message || 'Verification failed');
+          }
+        },
+      });
+      rz.on('payment.failed', () => setIsRecharging(false));
+      rz.open();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Recharge failed. Connection error.');
+      setIsRecharging(false);
     }
   };
 
@@ -75,6 +125,25 @@ export default function Profile() {
                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">BusGo Wallet Balance</p>
                <p className="text-4xl font-black tracking-tighter">₹{user?.walletBalance || 0}</p>
                <p className="text-[10px] text-gray-500 font-bold mt-4">Refunds drop exactly here.</p>
+               
+               <form onSubmit={handleRecharge} className="mt-6 flex flex-col gap-3 relative z-10">
+                 <input 
+                   type="number"
+                   min="10"
+                   max="50000"
+                   placeholder="Amount (₹)"
+                   value={rechargeAmount}
+                   onChange={e => setRechargeAmount(e.target.value)}
+                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                 />
+                 <button 
+                   type="submit"
+                   disabled={isRecharging}
+                   className="w-full bg-white text-black py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-200 transition-colors disabled:opacity-50"
+                 >
+                   {isRecharging ? 'Processing...' : 'Recharge Wallet'}
+                 </button>
+               </form>
             </div>
           </aside>
 

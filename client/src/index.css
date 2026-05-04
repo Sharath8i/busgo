@@ -46,7 +46,7 @@
 
   /* Forms */
   .input-field {
-    @apply w-full rounded-xl border border-surface-border bg-white px-4 py-3 text-sm transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none font-bold uppercase tracking-tight;
+    @apply w-full rounded-xl border border-surface-border bg-white px-4 py-3 text-sm transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none font-medium;
   }
 
   /* Buttons */

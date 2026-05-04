@@ -11,3 +11,5 @@ export const createPaymentOrder = (bookingId, amount) =>
   api.post('/payments/create-order', { bookingId, amount });
 export const verifyPayment = (body) => api.post('/payments/verify', body);
 export const payWithWallet = (bookingId) => api.post('/payments/pay-with-wallet', { bookingId });
+export const createRechargeOrder = (amount) => api.post('/payments/create-recharge-order', { amount });
+export const verifyRecharge = (body) => api.post('/payments/verify-recharge', body);
