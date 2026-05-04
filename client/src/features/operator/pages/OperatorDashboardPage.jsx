@@ -16,11 +16,11 @@ import OperatorTable from '../components/OperatorTable';
 
 const MENU_ITEMS = [
   { label: 'Overview', path: '/operator', icon: '📊', end: true },
-  { label: 'Fleet', path: '/operator/buses', icon: '🚌' },
-  { label: 'Corridors', path: '/operator/routes', icon: '🗺️' },
-  { label: 'Scheduling', path: '/operator/schedules', icon: '🕐' },
-  { label: 'Pilots', path: '/operator/drivers', icon: '👨‍✈️' },
-  { label: 'Ledger', path: '/operator/bookings', icon: '🎫' },
+  { label: 'Buses', path: '/operator/buses', icon: '🚌' },
+  { label: 'Routes', path: '/operator/routes', icon: '🗺️' },
+  { label: 'Schedules', path: '/operator/schedules', icon: '🕐' },
+  { label: 'Drivers', path: '/operator/drivers', icon: '👨‍✈️' },
+  { label: 'Bookings', path: '/operator/bookings', icon: '🎫' },
 ];
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -52,14 +52,14 @@ function RegisterBusForm() {
 
   return (
     <div className="animate-slide-up max-w-3xl">
-      <Link to="/operator/buses" className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline mb-4 block">← Return to Fleet</Link>
-      <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">Fleet Addition</h1>
-      <p className="text-on-surface-variant text-sm mb-10">Commission a new vehicle into active service.</p>
+      <Link to="/operator/buses" className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline mb-4 block">← Return to Buses</Link>
+      <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">Add Bus</h1>
+      <p className="text-on-surface-variant text-sm mb-10">Register a new bus into the system.</p>
 
       <Card className="p-12">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <Input 
-            label="Vehicle Identification Name" 
+            label="Bus Name" 
             {...register('busName', { required: 'Name is required' })} 
             error={errors.busName?.message}
             placeholder="e.g. Skyline Cruiser AC" 
@@ -73,7 +73,7 @@ function RegisterBusForm() {
           />
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-black uppercase tracking-wider text-on-surface-variant">Vehicle Architecture</label>
+              <label className="text-xs font-black uppercase tracking-wider text-on-surface-variant">Bus Type</label>
               <select {...register('busType')} className="input-field">
                 <option value="volvo">Volvo AC</option>
                 <option value="sleeper">Luxury Sleeper</option>
@@ -95,7 +95,7 @@ function RegisterBusForm() {
             helper="Enhance traveler experience with premium features"
           />
           <div className="flex gap-4 pt-4">
-            <Button type="submit" loading={submitting}>Register Vehicle ✓</Button>
+            <Button type="submit" loading={submitting}>Register Bus ✓</Button>
             <Button variant="ghost" onClick={() => navigate('/operator/buses')}>Cancel</Button>
           </div>
         </form>
@@ -131,8 +131,8 @@ function CreateRouteForm() {
 
   return (
     <div className="animate-slide-up max-w-4xl">
-      <Link to="/operator/routes" className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline mb-4 block">← Corridor Network</Link>
-      <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">Define Corridor</h1>
+      <Link to="/operator/routes" className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline mb-4 block">← Routes</Link>
+      <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">Create Route</h1>
       <Card className="p-12 mt-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-2 gap-6">
@@ -145,7 +145,7 @@ function CreateRouteForm() {
           </div>
           
           <div className="space-y-4">
-            <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant italic">Operational Waypoints (Intermediate Stops)</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant italic">Intermediate Stops</p>
             {stops.map((s, i) => (
               <div key={i} className="flex gap-4 items-end animate-slide-up">
                 <Input placeholder="City Name" value={s.cityName} className="flex-1" onChange={e => {
@@ -161,7 +161,7 @@ function CreateRouteForm() {
           </div>
 
           <div className="flex gap-4 pt-4">
-            <Button type="submit" loading={submitting}>Establish Corridor ✓</Button>
+            <Button type="submit" loading={submitting}>Create Route ✓</Button>
           </div>
         </form>
       </Card>
@@ -184,13 +184,13 @@ function ScheduleList({ schedules, onRefresh, loading }) {
 
   return (
     <OperatorTable 
-      title="Fleet Scheduling"
-      subtitle="Assignments of vehicles to active corridors"
+      title="Schedules"
+      subtitle="Bus and route assignments"
       loading={loading}
       onSearch={setQ}
       headers={[
-        { label: 'Asset / Corridor' },
-        { label: 'Schedule Windows' },
+        { label: 'Bus / Route' },
+        { label: 'Timings' },
         { label: 'Pricing' },
         { label: 'Actions', align: 'right' }
       ]}
@@ -204,7 +204,7 @@ function ScheduleList({ schedules, onRefresh, loading }) {
       renderRow={(s) => (
         <tr key={s._id} className="hover:bg-surface-container-low transition-all">
           <td className="px-10 py-6">
-            <p className="text-sm font-black uppercase tracking-tight">{s.busId?.busName || 'Legacy Asset'}</p>
+            <p className="text-sm font-black uppercase tracking-tight">{s.busId?.busName || 'Legacy Bus'}</p>
             <p className="text-[10px] text-on-surface-variant font-bold uppercase">{s.routeId?.originCity} ➔ {s.routeId?.destinationCity}</p>
           </td>
           <td className="px-10 py-6">
@@ -312,18 +312,18 @@ export default function OperatorDashboard() {
   if (loading && !stats && !buses.length && !schedules.length) return <Loading message="Initializing Fleet Console..." />;
 
   return (
-    <SidebarLayout title="Fleet Ops" menuItems={MENU_ITEMS}>
+    <SidebarLayout title="Operator Dashboard" menuItems={MENU_ITEMS}>
       <Routes>
         {/* ── OVERVIEW ── */}
         <Route index element={
           <div className="animate-slide-up">
             <header className="flex items-center justify-between mb-10">
               <div>
-                <h1 className="text-4xl font-black text-on-surface tracking-tighter">Operational Overview</h1>
-                <p className="text-on-surface-variant text-sm font-medium mt-1">Real-time fleet performance indicators.</p>
+                <h1 className="text-4xl font-black text-on-surface tracking-tighter">Dashboard Overview</h1>
+                <p className="text-on-surface-variant text-sm font-medium mt-1">Real-time performance indicators.</p>
               </div>
               <Link to="/operator/buses/new">
-                <Button icon={<span>+</span>}>Register Vehicle</Button>
+                <Button icon={<span>+</span>}>Add Bus</Button>
               </Link>
             </header>
 
@@ -331,9 +331,9 @@ export default function OperatorDashboard() {
 
             <div className="grid gap-6 sm:grid-cols-3 mb-12">
               {[
-                { label: 'Add Corridor', desc: 'Define new transit routes', path: '/operator/routes/new', icon: '🗺️' },
-                { label: 'Schedule Fleet', desc: 'Assign assets to departures', path: '/operator/schedules/new', icon: '🕐' },
-                { label: 'Pilot Onboarding', desc: 'Register new driver profiles', path: '/operator/drivers/new', icon: '👨‍✈️' },
+                { label: 'Add Route', desc: 'Define new transit routes', path: '/operator/routes/new', icon: '🗺️' },
+                { label: 'Add Schedule', desc: 'Assign assets to departures', path: '/operator/schedules/new', icon: '🕐' },
+                { label: 'Add Driver', desc: 'Register new driver profiles', path: '/operator/drivers/new', icon: '👨‍✈️' },
               ].map(a => (
                 <Link key={a.label} to={a.path}>
                    <Card className="hover:scale-[1.02] active:scale-95 group cursor-pointer text-center md:text-left">
@@ -349,7 +349,7 @@ export default function OperatorDashboard() {
               <section>
                 <Card className="p-0 overflow-hidden">
                    <div className="px-8 py-6 border-b border-outline-variant/10 flex items-center justify-between bg-surface-container-low/30">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-on-surface">Fleet Status</h3>
+                      <h3 className="text-sm font-black uppercase tracking-widest text-on-surface">Buses Status</h3>
                       <Link to="/operator/buses" className="text-[10px] font-black text-primary hover:underline uppercase">View All</Link>
                    </div>
                    <div className="divide-y divide-outline-variant/10">
@@ -370,7 +370,7 @@ export default function OperatorDashboard() {
                 <Card className="p-0 overflow-hidden">
                    <div className="px-8 py-6 border-b border-outline-variant/10 flex items-center justify-between bg-surface-container-low/30">
                       <h3 className="text-sm font-black uppercase tracking-widest text-on-surface">Recent Activity</h3>
-                      <Link to="/operator/bookings" className="text-[10px] font-black text-primary hover:underline uppercase">Audit Ledger</Link>
+                      <Link to="/operator/bookings" className="text-[10px] font-black text-primary hover:underline uppercase">View Bookings</Link>
                    </div>
                    <div className="divide-y divide-outline-variant/10">
                       {bookings.slice(0, 5).map(b => (
@@ -382,7 +382,7 @@ export default function OperatorDashboard() {
                            <p className="text-sm font-black text-primary">{formatCurrency(b.totalAmount)}</p>
                         </div>
                       ))}
-                      {bookings.length === 0 && <EmptyState icon="📒" title="No Ledger Daily" message="Active sales will mirror here." />}
+                      {bookings.length === 0 && <EmptyState icon="📒" title="No Recent Bookings" message="Active sales will mirror here." />}
                    </div>
                 </Card>
               </section>
@@ -419,13 +419,13 @@ function FleetPage({ buses, onRefresh, loading }) {
   
   return (
     <OperatorTable 
-      title="Fleet Inventory"
-      subtitle="Comprehensive vehicle status and telemetry"
+      title="Buses"
+      subtitle="List of all registered buses"
       loading={loading}
       onSearch={setQ}
-      headers={[{ label: 'Vehicle' }, { label: 'Class' }, { label: 'Capacity' }, { label: 'Operational Status', align: 'right' }]}
+      headers={[{ label: 'Bus' }, { label: 'Class' }, { label: 'Capacity' }, { label: 'Operational Status', align: 'right' }]}
       data={filtered}
-      actions={<Button size="sm" icon={<span>+</span>} onClick={() => window.location.href='/operator/buses/new'}>Add Asset</Button>}
+      actions={<Button size="sm" icon={<span>+</span>} onClick={() => window.location.href='/operator/buses/new'}>Add Bus</Button>}
       renderRow={b => (
         <tr key={b._id} className="hover:bg-surface-container-low transition-all">
           <td className="px-10 py-6"><p className="text-sm font-black uppercase">{b.busName}</p><p className="text-[10px] text-on-surface-variant font-bold uppercase">{b.registrationNo}</p></td>
@@ -444,13 +444,13 @@ function CorridorsPage({ routes, onRefresh, loading }) {
   
   return (
     <OperatorTable 
-      title="Service Corridors"
-      subtitle="Strategic transit paths and waypoints"
+      title="Routes"
+      subtitle="List of all active routes"
       loading={loading}
       onSearch={setQ}
       headers={[{ label: 'Departure' }, { label: 'Arrival' }, { label: 'Distance' }, { label: 'Estimated Transit', align: 'right' }]}
       data={filtered}
-      actions={<Button size="sm" onClick={() => window.location.href='/operator/routes/new'}>New Corridor</Button>}
+      actions={<Button size="sm" onClick={() => window.location.href='/operator/routes/new'}>Add Route</Button>}
       renderRow={r => (
         <tr key={r._id} className="hover:bg-surface-container-low transition-all">
           <td className="px-10 py-6 text-sm font-black uppercase">{r.originCity}</td>
@@ -471,18 +471,18 @@ function PilotsPage({ drivers, onRefresh, loading }) {
   
   return (
     <OperatorTable 
-      title="Flight Deck (Pilots)"
-      subtitle="Certified drivers and active duty status"
+      title="Drivers"
+      subtitle="List of all registered drivers"
       loading={loading}
       onSearch={setQ}
-      headers={[{ label: 'Pilot' }, { label: 'Auth / Contact' }, { label: 'Seniority' }, { label: 'Duty State', align: 'right' }]}
+      headers={[{ label: 'Driver' }, { label: 'Auth / Contact' }, { label: 'Seniority' }, { label: 'Duty State', align: 'right' }]}
       data={filtered}
-      actions={<Button size="sm" onClick={() => window.location.href='/operator/drivers/new'}>Recruit Pilot</Button>}
+      actions={<Button size="sm" onClick={() => window.location.href='/operator/drivers/new'}>Add Driver</Button>}
       renderRow={d => (
         <tr key={d._id} className="hover:bg-surface-container-low transition-all">
           <td className="px-10 py-6"><p className="text-sm font-black uppercase tracking-tight">{d.name}</p></td>
           <td className="px-10 py-6">
-            <p className="text-[10px] text-text-muted font-black uppercase mb-1">LIC: {d.licenseNumber}</p>
+            <p className="text-[10px] text-text-muted font-black uppercase mb-1">License: {d.licenseNumber}</p>
             <p className="text-xs font-bold text-primary">{d.phone}</p>
           </td>
           <td className="px-10 py-6"><p className="text-xs font-black text-on-surface">{d.experienceYears}Y</p></td>
@@ -499,11 +499,11 @@ function LedgerPage({ bookings, onRefresh, loading }) {
   
   return (
     <OperatorTable 
-      title="Transaction Ledger"
-      subtitle="Comprehensive audit trail of confirmed bookings"
+      title="Bookings"
+      subtitle="List of all confirmed bookings"
       loading={loading}
       onSearch={setQ}
-      headers={[{ label: 'Entity PNR' }, { label: 'Reconciliation' }, { label: 'Status' }, { label: 'Timestamp', align: 'right' }]}
+      headers={[{ label: 'PNR' }, { label: 'Reconciliation' }, { label: 'Status' }, { label: 'Timestamp', align: 'right' }]}
       data={filtered}
       renderRow={b => (
         <tr key={b._id} className="hover:bg-surface-container-low transition-all">
@@ -526,7 +526,7 @@ function CreateDriverForm() {
     try {
       setSubmitting(true);
       await api.post('/operator/drivers', data);
-      toast.success('Pilot onboarded!');
+      toast.success('Driver added!');
       navigate('/operator/drivers');
     } catch (err) { toast.error(err.response?.data?.message || 'Onboarding failed. Check telemetry.'); }
     finally { setSubmitting(false); }
@@ -534,14 +534,14 @@ function CreateDriverForm() {
 
   return (
     <div className="animate-slide-up max-w-xl">
-      <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-8">Onboard Pilot</h1>
+      <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-8">Add Driver</h1>
       <Card className="p-12 space-y-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          <Input label="Full Operational Name" {...register('name', { required: true })} />
-          <Input label="Secure Contact String (Mobile)" {...register('phone', { required: true })} />
-          <Input label="Pilot License ID" {...register('licenseNumber', { required: true })} />
+          <Input label="Full Name" {...register('name', { required: true })} />
+          <Input label="Mobile Number" {...register('phone', { required: true })} />
+          <Input label="License Number" {...register('licenseNumber', { required: true })} />
           <Input label="Cumulative Experience (Years)" type="number" {...register('experienceYears')} />
-          <Button type="submit" fullWidth loading={submitting}>Onboard Pilot ✓</Button>
+          <Button type="submit" fullWidth loading={submitting}>Add Driver ✓</Button>
         </form>
       </Card>
     </div>
@@ -577,24 +577,24 @@ function CreateScheduleForm({ buses, routes, drivers }) {
 
   return (
     <div className="animate-slide-up max-w-4xl">
-      <Link to="/operator/schedules" className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline mb-4 block">← Scheduling Grid</Link>
-      <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">Assign Service</h1>
-      <p className="text-on-surface-variant text-sm mb-10">Map an active asset to a corridor with timing parameters.</p>
+      <Link to="/operator/schedules" className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline mb-4 block">← Schedules</Link>
+      <h1 className="text-4xl font-black text-on-surface tracking-tighter mb-2">Add Schedule</h1>
+      <p className="text-on-surface-variant text-sm mb-10">Assign a bus to a route with timings.</p>
 
       <Card className="p-12">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
           <div className="grid grid-cols-2 gap-8">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant">Active Asset (Bus)</label>
+              <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant">Bus</label>
               <select {...register('busId', { required: 'Required' })} className="input-field">
-                <option value="">— Select Fleet Vehicle —</option>
+                <option value="">— Select Bus —</option>
                 {buses.map(b => <option key={b._id} value={b._id}>{b.busName} ({b.registrationNo})</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant">Active Corridor (Route)</label>
+              <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant">Route</label>
               <select {...register('routeId', { required: 'Required' })} className="input-field">
-                <option value="">— Select Service Corridor —</option>
+                <option value="">— Select Route —</option>
                 {routes.map(r => <option key={r._id} value={r._id}>{r.originCity} ➔ {r.destinationCity}</option>)}
               </select>
             </div>
@@ -618,7 +618,7 @@ function CreateScheduleForm({ buses, routes, drivers }) {
           </div>
 
           <div className="pt-8 border-t border-outline-variant/10">
-            <Button type="submit" loading={submitting} className="w-full sm:w-auto">Confirm Service Assignment ✓</Button>
+            <Button type="submit" loading={submitting} className="w-full sm:w-auto">Create Schedule ✓</Button>
           </div>
         </form>
       </Card>
@@ -649,12 +649,12 @@ function TripManifestWrapper() {
     <div className="animate-slide-up space-y-8">
       <header className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black tracking-tighter">Passenger Manifest</h2>
+          <h2 className="text-3xl font-black tracking-tighter">Passenger List</h2>
           <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mt-1">
              <span className="text-primary">{data.busName}</span> // {formatDate(data.travelDate)}
           </p>
         </div>
-        <Button variant="ghost" onClick={() => window.print()}>Print Manifest 🖨️</Button>
+        <Button variant="ghost" onClick={() => window.print()}>Print List 🖨️</Button>
       </header>
 
       <Card className="p-0 overflow-hidden">

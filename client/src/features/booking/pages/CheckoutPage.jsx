@@ -27,7 +27,7 @@ const passengerSchema = z.object({
 
 const schema = z.object({ passengers: z.array(passengerSchema).min(1) });
 
-const STEPS = ['Travelers', 'Ledger Sync'];
+const STEPS = ['Travelers', 'Payment'];
 
 export default function Checkout() {
   const { tripId } = useParams();
@@ -52,7 +52,7 @@ export default function Checkout() {
         const { data } = await fetchTripDetails(tripId);
         dispatch(selectTrip(data.trip || data));
       } catch (e) {
-        toast.error('Mission data restoration failed');
+        toast.error('Trip data could not be loaded');
         navigate('/');
       } finally {
         setLoading(false);
@@ -75,16 +75,16 @@ export default function Checkout() {
     },
   });
 
-  if (loading) return <Loading message="Synchronizing Ledger..." />;
+  if (loading) return <Loading message="Loading Trip Details..." />;
 
   if (!selectedSeats.length) {
     return (
       <div className="min-h-screen bg-surface flex items-center justify-center p-8">
         <Card className="max-w-md w-full p-12 text-center animate-slide-up">
            <span className="text-6xl mb-8 block">🎫</span>
-           <h2 className="text-3xl font-black uppercase tracking-tighter text-on-surface">No Node Selected</h2>
-           <p className="text-on-surface-variant font-medium text-sm mt-4">You must allocate a fleet position before initializing the ledger.</p>
-           <Button className="mt-10" fullWidth onClick={() => navigate(`/seats/${tripId}`)}>Allocate Seats</Button>
+           <h2 className="text-3xl font-black uppercase tracking-tighter text-on-surface">No Seats Selected</h2>
+           <p className="text-on-surface-variant font-medium text-sm mt-4">Please select your seats before continuing to checkout.</p>
+           <Button className="mt-10" fullWidth onClick={() => navigate(`/seats/${tripId}`)}>Select Seats</Button>
         </Card>
       </div>
     );
@@ -103,9 +103,9 @@ export default function Checkout() {
         setDiscountPreview(data.discount || 0);
         setCouponApplied(true);
         dispatch(applyCoupon(couponCode));
-        toast.success('Promotional Corridor Authorized');
+        toast.success('Coupon Applied Successfully');
       } else {
-        toast.error(data.message || 'Invalid Token');
+        toast.error(data.message || 'Invalid Coupon');
       }
     } catch (e) { toast.error('Check failed'); }
   };
@@ -163,7 +163,7 @@ export default function Checkout() {
       <div className="mx-auto max-w-6xl px-8">
         <header className="mb-12">
            <Badge variant="primary" className="mb-4">Secure Checkout</Badge>
-           <h1 className="text-5xl font-black text-on-surface tracking-tighter uppercase leading-none">Process Manifest.</h1>
+           <h1 className="text-5xl font-black text-on-surface tracking-tighter uppercase leading-none">Checkout.</h1>
            
            <div className="mt-10 flex items-center gap-6">
              {STEPS.map((s, i) => (
@@ -186,55 +186,55 @@ export default function Checkout() {
                   <Card key={seat} className="p-10 hover:border-primary/20 transition-all border-outline-variant/10">
                     <div className="flex items-center justify-between mb-10 pb-6 border-b border-outline-variant/10">
                       <div className="flex items-center gap-4">
-                        <Badge variant="primary">HUB NODE {seat}</Badge>
-                        <h3 className="text-xs font-black uppercase tracking-widest text-on-surface">Traveler Credentials</h3>
+                        <Badge variant="primary">SEAT {seat}</Badge>
+                        <h3 className="text-xs font-black uppercase tracking-widest text-on-surface">Passenger Details</h3>
                       </div>
                     </div>
                     <div className="grid gap-8 sm:grid-cols-2">
                       <div className="sm:col-span-2">
-                        <Input label="Operational Name" {...register(`passengers.${idx}.name`)} error={errors.passengers?.[idx]?.name?.message} placeholder="Eg. John Doe" />
+                        <Input label="Full Name" {...register(`passengers.${idx}.name`)} error={errors.passengers?.[idx]?.name?.message} placeholder="Eg. John Doe" />
                       </div>
-                      <Input label="Age Unit" type="number" {...register(`passengers.${idx}.age`)} error={errors.passengers?.[idx]?.age?.message} />
+                      <Input label="Age" type="number" {...register(`passengers.${idx}.age`)} error={errors.passengers?.[idx]?.age?.message} />
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-2">Biological Identity</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-2">Gender</label>
                         <select {...register(`passengers.${idx}.gender`)} className="w-full h-12 px-6 bg-surface-container rounded-xl font-bold border-2 border-transparent focus:border-primary/20 transition-all outline-none appearance-none">
-                           <option value="M">Male Identity</option>
-                           <option value="F">Female Identity</option>
-                           <option value="Other">Non-Binary</option>
+                           <option value="M">Male</option>
+                           <option value="F">Female</option>
+                           <option value="Other">Other</option>
                         </select>
                       </div>
                     </div>
                   </Card>
                 ))}
-                <Button type="submit" fullWidth size="lg">Review Transaction Layout ➔</Button>
+                <Button type="submit" fullWidth size="lg">Continue to Payment ➔</Button>
               </form>
             ) : (
               <div className="space-y-8">
                  <Card className="p-10 border-primary/20 bg-primary/5">
                     <div className="flex items-center justify-between mb-8">
                        <h3 className="text-xs font-black uppercase tracking-widest text-primary">Pre-payment Summary</h3>
-                       <Button variant="ghost" size="sm" onClick={() => setStep(1)}>Edit Identities</Button>
+                       <Button variant="ghost" size="sm" onClick={() => setStep(1)}>Edit Details</Button>
                     </div>
 
                     <div className="bg-white rounded-3xl p-8 shadow-sm mb-10">
                        <div className="flex justify-between items-center mb-4">
                           <p className="font-black text-on-surface uppercase tracking-tighter text-2xl">{selectedTrip?.originCity} ➜ {selectedTrip?.destinationCity}</p>
                        </div>
-                       <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">{selectedTrip?.busDetails?.busName} • {selectedSeats.length} Active Nodes Allocated</p>
+                       <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">{selectedTrip?.busDetails?.busName} • {selectedSeats.length} Seats Selected</p>
                     </div>
 
                     <div className="space-y-6 pt-6 border-t border-primary/10">
                        <div className="flex justify-between text-sm">
-                          <span className="text-on-surface-variant font-medium">Core Allocation ({selectedSeats.length} units)</span>
+                          <span className="text-on-surface-variant font-medium">Base Fare ({selectedSeats.length} seats)</span>
                           <span className="font-black text-on-surface">{formatCurrency(baseTotal)}</span>
                        </div>
                        <div className="flex justify-between text-sm">
-                          <span className="text-on-surface-variant font-medium">Service Protocol (5%)</span>
+                          <span className="text-on-surface-variant font-medium">Taxes & Fees (5%)</span>
                           <span className="font-black text-on-surface">{formatCurrency(gst)}</span>
                        </div>
                        {discountPreview > 0 && (
                           <div className="flex justify-between text-sm">
-                             <span className="font-black text-success uppercase tracking-widest text-[10px]">Promotional Deduction</span>
+                             <span className="font-black text-success uppercase tracking-widest text-[10px]">Discount Applied</span>
                              <span className="font-black text-success">- {formatCurrency(discountPreview)}</span>
                           </div>
                        )}
@@ -242,20 +242,20 @@ export default function Checkout() {
                  </Card>
 
                  <Card className="p-10">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-8">Financial Allocation</h4>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-8">Payment Summary</h4>
                     
                     {!couponApplied ? (
                       <div className="flex gap-4 mb-10">
                          <input value={couponCode} onChange={e => setCouponCode(e.target.value.toUpperCase())} placeholder="PROMO CODE" className="flex-1 px-6 py-4 bg-surface-container rounded-xl font-bold border-2 border-transparent focus:border-primary/20 transition-all outline-none" />
-                         <Button variant="ghost" onClick={onValidateCoupon}>Authorize</Button>
+                         <Button variant="ghost" onClick={onValidateCoupon}>Apply</Button>
                       </div>
                     ) : (
-                      <Badge variant="success" className="w-full text-center py-4 mb-10">DISCOUNT PROTOCOL ACTIVE</Badge>
+                      <Badge variant="success" className="w-full text-center py-4 mb-10">DISCOUNT APPLIED</Badge>
                     )}
 
                     <div className="flex justify-between items-end mb-12">
                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Final GTV</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Total Amount</p>
                           <p className="text-5xl font-black tracking-tighter text-on-surface leading-none">{formatCurrency(afterDiscount)}</p>
                        </div>
                     </div>
@@ -265,8 +265,8 @@ export default function Checkout() {
                         <div className="flex items-center gap-4">
                            <div className={`h-10 w-10 rounded-xl flex items-center justify-center text-xl bg-primary/10 text-primary`}>💳</div>
                            <div>
-                              <p className="text-[10px] font-black uppercase tracking-wider text-primary leading-none mb-1">BusGo Credits</p>
-                              <p className="text-sm font-black text-on-surface">Hub Balance: {formatCurrency(user.walletBalance)}</p>
+                              <p className="text-[10px] font-black uppercase tracking-wider text-primary leading-none mb-1">BusGo Wallet</p>
+                              <p className="text-sm font-black text-on-surface">Available Balance: {formatCurrency(user.walletBalance)}</p>
                            </div>
                         </div>
                         <input

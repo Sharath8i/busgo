@@ -43,16 +43,16 @@ export default function Register() {
     const { confirmPassword, ...payload } = data;
     const res = await dispatch(registerThunk(payload));
     if (registerThunk.fulfilled.match(res)) {
-      toast.success('Universal Security Code Dispatched');
+      toast.success('OTP sent to your email');
     }
   };
 
   const onVerifyOtp = async (e) => {
     e.preventDefault();
-    if (otp.length !== 6) return toast.error('Check OTP sequence');
+    if (otp.length !== 6) return toast.error('Invalid OTP');
     const res = await dispatch(verifyOtpThunk({ email: tempEmail, otp }));
     if (verifyOtpThunk.fulfilled.match(res)) {
-      toast.success('Account Verified and Active');
+      toast.success('Account Verified Successfully');
       navigate('/login');
     }
   };
@@ -86,40 +86,40 @@ export default function Register() {
             {!tempEmail ? (
                <>
                   <div className="mb-12">
-                     <h1 className="text-5xl font-black text-on-surface tracking-tighter mb-4">Initialize Account</h1>
-                     <p className="text-on-surface-variant font-medium text-sm">Join the network for premium transit services.</p>
+                     <h1 className="text-5xl font-black text-on-surface tracking-tighter mb-4">Create Account</h1>
+                     <p className="text-on-surface-variant font-medium text-sm">Join us to book your bus tickets easily.</p>
                   </div>
 
                   <form onSubmit={handleSubmit(onRegister)} className="space-y-8">
-                     <Input label="Identity Name" {...register('fullName')} error={errors.fullName?.message} placeholder="Eg. Sharath Kumar" />
+                     <Input label="Full Name" {...register('fullName')} error={errors.fullName?.message} placeholder="Eg. Sharath Kumar" />
 
                      <div className="grid grid-cols-2 gap-6">
-                        <Input label="Email Identity" type="email" {...register('email')} error={errors.email?.message} placeholder="you@host.com" />
-                        <Input label="Contact Node" type="tel" {...register('phone')} error={errors.phone?.message} placeholder="10 Digits" />
+                        <Input label="Email Address" type="email" {...register('email')} error={errors.email?.message} placeholder="you@host.com" />
+                        <Input label="Phone Number" type="tel" {...register('phone')} error={errors.phone?.message} placeholder="10 Digits" />
                      </div>
 
                      <div className="grid grid-cols-2 gap-6">
-                        <Input label="Access Passcode" type="password" {...register('password')} error={errors.password?.message} />
-                        <Input label="Re-type Passcode" type="password" {...register('confirmPassword')} error={errors.confirmPassword?.message} />
+                        <Input label="Password" type="password" {...register('password')} error={errors.password?.message} />
+                        <Input label="Confirm Password" type="password" {...register('confirmPassword')} error={errors.confirmPassword?.message} />
                      </div>
 
                      <Button type="submit" fullWidth loading={isLoading} size="lg" className="mt-4">
-                        Initialize Node ✓
+                        Create Account ✓
                      </Button>
                   </form>
 
                   <div className="mt-12 pt-10 border-t border-outline-variant/10 text-center">
-                     <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-6">Established Member?</p>
+                     <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-6">Already have an account?</p>
                      <Link to="/login">
-                        <Button variant="ghost" fullWidth>Relink Account ➜</Button>
+                        <Button variant="ghost" fullWidth>Login ➜</Button>
                      </Link>
                   </div>
                </>
             ) : (
                <div className="text-center">
                   <div className="mb-12">
-                     <h1 className="text-5xl font-black text-on-surface tracking-tighter mb-4">Verify Node</h1>
-                     <p className="text-on-surface-variant font-medium text-sm">Transmit the 6-digit sequence sent to your hub.</p>
+                     <h1 className="text-5xl font-black text-on-surface tracking-tighter mb-4">Verify Email</h1>
+                     <p className="text-on-surface-variant font-medium text-sm">Enter the 6-digit OTP sent to your email.</p>
                   </div>
 
                   <form onSubmit={onVerifyOtp} className="space-y-10">
@@ -131,18 +131,18 @@ export default function Register() {
                            placeholder="000000"
                            autoFocus
                         />
-                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-4">Security sequence required</p>
+                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-4">OTP is required</p>
                      </div>
                      
                      <Button type="submit" fullWidth loading={isLoading} disabled={otp.length < 6} size="lg">
-                        Finalize Sync ✓
+                        Verify OTP ✓
                      </Button>
                      
                      <div className="flex items-center justify-between mt-8">
                         <button type="button" onClick={() => dispatch(setTempEmail(null))} className="text-[10px] font-black uppercase text-on-surface-variant hover:text-primary transition-colors tracking-widest">
-                           ← Correct Hub ID
+                           ← Change Email
                         </button>
-                        <button type="button" className="text-[10px] font-black uppercase text-primary underline tracking-widest">Resend Sequence</button>
+                        <button type="button" className="text-[10px] font-black uppercase text-primary underline tracking-widest">Resend OTP</button>
                      </div>
                   </form>
                </div>

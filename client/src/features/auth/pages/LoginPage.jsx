@@ -60,7 +60,7 @@ export default function Login() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             <Input
-              label="Email Identity"
+              label="Email Address"
               type="email"
               {...register('email', { required: 'Email address is required' })}
               error={errors.email?.message}
@@ -69,14 +69,14 @@ export default function Login() {
 
             <div className="space-y-2">
               <Input
-                label="Secure Passcode"
+                label="Password"
                 type="password"
-                {...register('password', { required: 'Passcode is mandatory' })}
+                {...register('password', { required: 'Password is required' })}
                 error={errors.password?.message}
                 placeholder="••••••••"
               />
               <div className="flex justify-end pt-1">
-                <Link to="#" className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-container transition-colors">Recover Credentials?</Link>
+                <Link to="#" className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-container transition-colors">Forgot Password?</Link>
               </div>
             </div>
 
@@ -88,20 +88,20 @@ export default function Login() {
           <div className="mt-12 opacity-0 animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <div className="relative flex items-center justify-center mb-10">
               <div className="w-full h-px bg-outline-variant/10"></div>
-              <span className="absolute px-6 bg-surface text-[10px] font-black text-on-surface-variant uppercase tracking-[0.3em]">Fleet Authentication</span>
+              <span className="absolute px-6 bg-surface text-[10px] font-black text-on-surface-variant uppercase tracking-[0.3em]">Or continue with</span>
             </div>
 
             <div className="flex justify-center">
               <button className="flex items-center justify-center gap-4 py-4 px-10 border border-outline-variant/20 rounded-2xl hover:bg-surface-container transition-all active:scale-95 w-full group overflow-hidden relative">
                 <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiDRtKJVXw1OS8XC1u_y9s7FSm88c0uVDiuz4dppDNKoNWM-uZMIiV4j2pot66Xi3kpHndrtdkZ3Gajpj-mtTqXn8cWT8A4DnZblXGRh7FHh8HDCk326X2-4Qe0Gw56JfeVD4OO_aZ8XIMwZIme5ujMs93bbNjiBBA281NfGMjB-Ry9COOaWkqlTRprGjdMQsY93NDIYUGwvs4hjR0bu93RuXWrEYYCpYZgvS3p-RU4RRPQ4fK3zWPG6XFiYVKws3xyJaNd8ry4O8" alt="G" className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
-                <span className="text-[10px] font-black text-on-surface uppercase tracking-[0.2em]">Enterprise Login</span>
+                <span className="text-[10px] font-black text-on-surface uppercase tracking-[0.2em]">Google Login</span>
               </button>
             </div>
           </div>
         </div>
 
         <footer className="mt-20 flex flex-wrap gap-8 opacity-40 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-          <Link to="#" className="text-[9px] font-black uppercase tracking-widest text-on-surface hover:text-primary transition-colors">Privacy Protocal</Link>
+          <Link to="#" className="text-[9px] font-black uppercase tracking-widest text-on-surface hover:text-primary transition-colors">Privacy Policy</Link>
           <Link to="#" className="text-[9px] font-black uppercase tracking-widest text-on-surface hover:text-primary transition-colors">T&C</Link>
           <Link to="#" className="text-[9px] font-black uppercase tracking-widest text-on-surface hover:text-primary transition-colors">Network Status</Link>
         </footer>

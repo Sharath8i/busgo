@@ -94,9 +94,9 @@ export default function App() {
         element={
           <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-surface-alt">
             <p className="text-9xl font-black text-primary/10">404</p>
-            <h1 className="text-2xl font-black text-text-main uppercase tracking-tighter">Lost in Transit</h1>
-            <p className="text-text-muted text-sm font-medium uppercase tracking-widest">Route Not Found</p>
-            <Link to="/" className="btn-primary mt-6 px-10">Back to Base</Link>
+            <h1 className="text-2xl font-black text-text-main uppercase tracking-tighter">Page Not Found</h1>
+            <p className="text-text-muted text-sm font-medium uppercase tracking-widest">The page you are looking for does not exist</p>
+            <Link to="/" className="btn-primary mt-6 px-10">Go to Homepage</Link>
           </div>
         }
       />
